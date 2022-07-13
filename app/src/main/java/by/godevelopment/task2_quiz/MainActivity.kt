@@ -3,24 +3,44 @@ package by.godevelopment.task2_quiz
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.ui.Modifier
+import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import by.godevelopment.task2_quiz.data.QuizDataSource
 import by.godevelopment.task2_quiz.ui.screens.QuizScreen
 import by.godevelopment.task2_quiz.ui.theme.Task2QuizTheme
+import by.godevelopment.task2_quiz.ui.viewmodels.MainViewModel
+import by.godevelopment.task2_quiz.ui.viewmodels.MainViewModelFactory
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    private val viewModel: MainViewModel by viewModels { MainViewModelFactory(QuizDataSource) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
-            Task2QuizTheme {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    QuizScreen("Android")
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { uiState ->
+                    setContent {
+                        Task2QuizTheme {
+                            QuizScreen(
+                                title = getString(R.string.screen_title_question) + (uiState.currentQuestionIndex + 1).toString(),
+                                questionModel = uiState.questionModel,
+                                selectedOption = uiState.selectedOption,
+                                showArrowBack = uiState.showArrowBack,
+                                textNextButton = getString(uiState.textNextButton),
+                                enablePreviousButton = uiState.enablePreviousButton,
+                                enableNextButton = uiState.enableNextButton,
+
+                                onClickArrowBack = viewModel::onClickArrowBack,
+                                onOptionSelected = viewModel::onOptionSelected,
+                                onClickButtonPrevious = viewModel::onClickButtonPrevious,
+                                onClickButtonNext = viewModel::onClickButtonNext
+                            )
+                        }
+                    }
                 }
             }
         }

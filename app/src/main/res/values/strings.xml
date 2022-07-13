@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Task 2 - Quiz</string>
+    <string name="btn_text_previous">Previous</string>
+    <string name="btn_text_next">Next</string>
+    <string name="btn_text_done">Done</string>
+    <string name="screen_title_question">Question #</string>
 </resources>
