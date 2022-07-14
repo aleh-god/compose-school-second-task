@@ -13,4 +13,4 @@ https://github.com/aleh-god/rsschool2021-Android-task-quiz
 
 ### Demo:
 
-<img alt="demo" src="https://github.com/aleh-god/compose-school-second-task/blob/main/QuizComposeDemo.gif" />
+<img alt="demo" src="https://github.com/aleh-god/compose-school-second-task/blob/master/QuizComposeDemo.gif" />
