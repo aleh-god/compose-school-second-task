@@ -1,13 +1,13 @@
 package by.godevelopment.task2_quiz.ui.viewmodels
 
-import android.util.Log
 import androidx.annotation.StringRes
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import by.godevelopment.task2_quiz.R
 import by.godevelopment.task2_quiz.commons.EMPTY_STRING
-import by.godevelopment.task2_quiz.commons.TAG
 import by.godevelopment.task2_quiz.data.QuizDataSource
 import by.godevelopment.task2_quiz.data.models.QuestionModel
+import by.godevelopment.task2_quiz.ui.models.AppScreen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +17,9 @@ class MainViewModel(
     private val quizDataSource: QuizDataSource
 ) : ViewModel() {
 
-    private val selectedOptions: MutableMap<Int, String> = mutableMapOf()
+    private val selectedOptions: MutableMap<String, String> = mutableMapOf()
+
+    var destination: MutableLiveData<AppScreen> = MutableLiveData(AppScreen.Quiz)
 
     private val _uiState: MutableStateFlow<UiState> = MutableStateFlow(
         UiState(
@@ -36,7 +38,7 @@ class MainViewModel(
     }
 
     fun onOptionSelected(result: String) {
-        selectedOptions[_uiState.value.currentQuestionIndex] = result
+        selectedOptions[_uiState.value.questionModel.question] = result
         _uiState.update {
             it.copy(
                 selectedOption = result,
@@ -69,13 +71,26 @@ class MainViewModel(
     }
 
     private fun runResultScreen() {
-        Log.i(TAG, "runResultScreen: invoke")
+        destination.value = AppScreen.Result
+    }
+
+    fun restartQuizScreen() {
+        _uiState.value = UiState(
+            showArrowBack = false,
+            enablePreviousButton = false,
+            enableNextButton = true,
+            currentQuestionIndex = 0,
+            questionModel = quizDataSource.quizData[0],
+            textNextButton = R.string.btn_text_next
+        )
+        selectedOptions.clear()
+        destination.value = AppScreen.Quiz
     }
 
     private fun changeUiState(newIndex: Int): UiState = uiState.value.copy(
         currentQuestionIndex = newIndex,
         questionModel = quizDataSource.quizData[newIndex],
-        selectedOption = selectedOptions[newIndex] ?: EMPTY_STRING,
+        selectedOption = selectedOptions[quizDataSource.quizData[newIndex].question] ?: EMPTY_STRING,
         enablePreviousButton = newIndex != 0,
         showArrowBack = newIndex != 0,
         textNextButton =
@@ -89,8 +104,18 @@ class MainViewModel(
     private fun checkHaveAllAnswers(): Boolean {
         val countQuestions = quizDataSource.quizData.size
         val countCurrentAnswers = selectedOptions.size
-        Log.i(TAG, "checkHaveAllAnswers: $countQuestions = $countCurrentAnswers")
         return countCurrentAnswers == countQuestions
+    }
+
+    fun generateResult(): Pair<Int, Int> {
+        var count = 0
+        for ((question, selectedOption) in selectedOptions) {
+            val questionModel = quizDataSource.quizData.firstOrNull {
+                it.question == question
+            }
+            if(questionModel?.correctAnswer == selectedOption) count++
+        }
+        return count to selectedOptions.size
     }
 
     data class UiState(
