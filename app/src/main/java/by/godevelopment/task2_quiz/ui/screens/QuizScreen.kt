@@ -80,27 +80,29 @@ fun QuizScreen(
 @Preview(showBackground = true)
 @Composable
 fun QuizScreenPreview() {
-    Task2QuizTheme {
-        QuizScreen(
-            title = "Question #1",
-            onClickArrowBack = {
-                Log.i(ContentValues.TAG, "TopAppBarPreview: onClickArrowBack")
-            },
-            questionModel = QuestionModel("Вы готовы, дети?", listOf("Да, капитан!", "Да!", "Нет.", "Нет, капитан", "буль-буль-буль"), "Да, капитан!"),
-            selectedOption = "",
-            onOptionSelected = {
-                Log.i(TAG, "QuestionWidgetPreview: onOptionSelected $it")
-            },
-            onClickButtonPrevious = {
-                Log.i(ContentValues.TAG, "TopAppBarPreview: onClickButtonPrevious")
-            },
-            onClickButtonNext = {
-                Log.i(ContentValues.TAG, "TopAppBarPreview: onClickButtonNext")
-            },
-            showArrowBack = true,
-            enableNextButton = true,
-            enablePreviousButton = true,
-            textNextButton = stringResource(R.string.btn_text_next)
-        )
-    }
+    Task2QuizTheme(
+        content =  {
+            QuizScreen(
+                title = "Question #1",
+                onClickArrowBack = {
+                    Log.i(ContentValues.TAG, "TopAppBarPreview: onClickArrowBack")
+                },
+                questionModel = QuestionModel("Вы готовы, дети?", listOf("Да, капитан!", "Да!", "Нет.", "Нет, капитан", "буль-буль-буль"), "Да, капитан!"),
+                selectedOption = "",
+                onOptionSelected = {
+                    Log.i(TAG, "QuestionWidgetPreview: onOptionSelected $it")
+                },
+                onClickButtonPrevious = {
+                    Log.i(ContentValues.TAG, "TopAppBarPreview: onClickButtonPrevious")
+                },
+                onClickButtonNext = {
+                    Log.i(ContentValues.TAG, "TopAppBarPreview: onClickButtonNext")
+                },
+                showArrowBack = true,
+                enableNextButton = true,
+                enablePreviousButton = true,
+                textNextButton = stringResource(R.string.btn_text_next)
+            )
+        }
+    )
 }
