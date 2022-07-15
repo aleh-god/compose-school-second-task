@@ -93,7 +93,8 @@ fun Task2QuizTheme(
     }
 
     val typography = when(themeNumber) {
-        0,2,4 -> Typography
+        0 -> Typography
+        2,4 -> TypographyLato
         1,3 -> TypographyAbril
         else -> Typography
     }
